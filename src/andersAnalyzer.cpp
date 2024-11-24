@@ -25,6 +25,10 @@ void andersAnalyzer::SetupResults()
 
 void andersAnalyzer::WorkerThread()
 {
+	U64 wrt_start = 0;
+	U64 wrt_end = 0;
+
+
 
 	auto* read_trigger = GetAnalyzerChannelData(mSettings.mReadTriggerChannel);
 	auto* pin1 = GetAnalyzerChannelData(mSettings.mPin1Channel);
@@ -35,14 +39,35 @@ void andersAnalyzer::WorkerThread()
 	if( read_trigger->GetBitState() == BIT_LOW )
 		read_trigger->AdvanceToNextEdge();
 
+	// Unknown state: set it to 0xFF
+	wrt_end = read_trigger->GetSampleNumber();
+	Frame frame;
+	frame.mData1 = 0xff;
+	frame.mFlags = 0;
+	frame.mStartingSampleInclusive = 0;
+	frame.mEndingSampleInclusive = wrt_end;
+	mResults->AddFrame( frame );
+	mResults->CommitResults();
+	ReportProgress( frame.mEndingSampleInclusive );
+	wrt_start = wrt_end;
 
+
+	// bool first_sample_taken;
 	U8 data = 0;
+        U8 number = 0;
 	for( ; ; )
 	{
 
+	/* What do i need:
+		- Sample nr of this trigger rEdge: To be able to read pin data and know start of output
+		- Sample nr of next trigger rEdge: To know end of output
+		- Acumulated pin value*/
 
-		U64 starting_sample = read_trigger->GetSampleNumber();
-        U8 number = 0;
+	U64 starting_sample = read_trigger->GetSampleNumber();
+	pin1->AdvanceToAbsPosition(read_trigger->GetSampleNumber());
+	pin2->AdvanceToAbsPosition(read_trigger->GetSampleNumber());
+	pin3->AdvanceToAbsPosition(read_trigger->GetSampleNumber());
+	pin4->AdvanceToAbsPosition(read_trigger->GetSampleNumber());
         number |= (pin1->GetBitState() == BIT_HIGH ? 1 : 0) << 0; // Pin 1 (LSB)
         number |= (pin2->GetBitState() == BIT_HIGH ? 1 : 0) << 1; // Pin 2
         number |= (pin3->GetBitState() == BIT_HIGH ? 1 : 0) << 2; // Pin 3
@@ -52,14 +77,16 @@ void andersAnalyzer::WorkerThread()
 		read_trigger->AdvanceToNextEdge(); //rising edge -- beginning of the start bit
 
 		Frame frame;
-		frame.mData1 = data++;
-		frame.mFlags = number;
+		frame.mData1 = number;
+		frame.mFlags = 0;
 		frame.mStartingSampleInclusive = starting_sample;
 		frame.mEndingSampleInclusive = read_trigger->GetSampleNumber();
 
 		mResults->AddFrame( frame );
 		mResults->CommitResults();
 		ReportProgress( frame.mEndingSampleInclusive );
+	read_trigger->AdvanceToAbsPosition(starting_sample);
+
 	}
 }
 

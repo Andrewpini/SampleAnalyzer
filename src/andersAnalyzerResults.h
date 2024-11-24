@@ -1,16 +1,16 @@
-#ifndef SIMPLESERIAL_ANALYZER_RESULTS
-#define SIMPLESERIAL_ANALYZER_RESULTS
+#ifndef ANDERS_ANALYZER_RESULTS
+#define ANDERS_ANALYZER_RESULTS
 
 #include <AnalyzerResults.h>
 
-class SimpleSerialAnalyzer;
-class SimpleSerialAnalyzerSettings;
+class andersAnalyzer;
+class andersAnalyzerSettings;
 
-class SimpleSerialAnalyzerResults : public AnalyzerResults
+class andersAnalyzerResults : public AnalyzerResults
 {
 public:
-	SimpleSerialAnalyzerResults( SimpleSerialAnalyzer* analyzer, SimpleSerialAnalyzerSettings* settings );
-	virtual ~SimpleSerialAnalyzerResults();
+	andersAnalyzerResults( andersAnalyzer* analyzer, andersAnalyzerSettings* settings );
+	virtual ~andersAnalyzerResults();
 
 	virtual void GenerateBubbleText( U64 frame_index, Channel& channel, DisplayBase display_base );
 	virtual void GenerateExportFile( const char* file, DisplayBase display_base, U32 export_type_user_id );
@@ -22,8 +22,8 @@ public:
 protected: //functions
 
 protected:  //vars
-	SimpleSerialAnalyzerSettings* mSettings;
-	SimpleSerialAnalyzer* mAnalyzer;
+	andersAnalyzerSettings* mSettings;
+	andersAnalyzer* mAnalyzer;
 };
 
-#endif //SIMPLESERIAL_ANALYZER_RESULTS
+#endif //ANDERS_ANALYZER_RESULTS

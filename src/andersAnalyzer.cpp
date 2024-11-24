@@ -52,41 +52,52 @@ void andersAnalyzer::WorkerThread()
 	wrt_start = wrt_end;
 
 
-	// bool first_sample_taken;
+	bool first_sample_taken;
 	U8 data = 0;
-        U8 number = 0;
-	for( ; ; )
-	{
+        U8 state = 0;
 
 	/* What do i need:
 		- Sample nr of this trigger rEdge: To be able to read pin data and know start of output
 		- Sample nr of next trigger rEdge: To know end of output
 		- Acumulated pin value*/
 
-	U64 starting_sample = read_trigger->GetSampleNumber();
-	pin1->AdvanceToAbsPosition(read_trigger->GetSampleNumber());
-	pin2->AdvanceToAbsPosition(read_trigger->GetSampleNumber());
-	pin3->AdvanceToAbsPosition(read_trigger->GetSampleNumber());
-	pin4->AdvanceToAbsPosition(read_trigger->GetSampleNumber());
-        number |= (pin1->GetBitState() == BIT_HIGH ? 1 : 0) << 0; // Pin 1 (LSB)
-        number |= (pin2->GetBitState() == BIT_HIGH ? 1 : 0) << 1; // Pin 2
-        number |= (pin3->GetBitState() == BIT_HIGH ? 1 : 0) << 2; // Pin 3
-        number |= (pin4->GetBitState() == BIT_HIGH ? 1 : 0) << 3; // Pin 4 (MSB)
-		read_trigger->AdvanceToNextEdge(); //falling edge -- beginning of the start bit
+	for( ; ; )
+	{
 
-		read_trigger->AdvanceToNextEdge(); //rising edge -- beginning of the start bit
+	U64 current_sample = read_trigger->GetSampleNumber();
+	wrt_end = current_sample;
 
+	if (first_sample_taken)
+	{
 		Frame frame;
-		frame.mData1 = number;
+		frame.mData1 = state;
 		frame.mFlags = 0;
-		frame.mStartingSampleInclusive = starting_sample;
-		frame.mEndingSampleInclusive = read_trigger->GetSampleNumber();
+		frame.mStartingSampleInclusive = wrt_start;
+		frame.mEndingSampleInclusive = wrt_end;
 
 		mResults->AddFrame( frame );
 		mResults->CommitResults();
 		ReportProgress( frame.mEndingSampleInclusive );
-	read_trigger->AdvanceToAbsPosition(starting_sample);
 
+		wrt_start = current_sample;
+		state = 0;
+	}
+
+
+	pin1->AdvanceToAbsPosition(read_trigger->GetSampleNumber());
+	pin2->AdvanceToAbsPosition(read_trigger->GetSampleNumber());
+	pin3->AdvanceToAbsPosition(read_trigger->GetSampleNumber());
+	pin4->AdvanceToAbsPosition(read_trigger->GetSampleNumber());
+        state |= (pin1->GetBitState() == BIT_HIGH ? 1 : 0) << 0; // Pin 1 (LSB)
+        state |= (pin2->GetBitState() == BIT_HIGH ? 1 : 0) << 1; // Pin 2
+        state |= (pin3->GetBitState() == BIT_HIGH ? 1 : 0) << 2; // Pin 3
+        state |= (pin4->GetBitState() == BIT_HIGH ? 1 : 0) << 3; // Pin 4 (MSB)
+
+
+	read_trigger->AdvanceToNextEdge(); //falling edge -- beginning of the start bit
+	read_trigger->AdvanceToNextEdge(); //rising edge -- beginning of the start bit
+
+	first_sample_taken = true;
 	}
 }
 

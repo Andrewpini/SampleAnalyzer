@@ -23,7 +23,12 @@ void andersAnalyzerResults::GenerateBubbleText( U64 frame_index, Channel& channe
 
 	char number_str[128];
 	AnalyzerHelpers::GetNumberString( frame.mData1, display_base, 8, number_str, 128 );
-	AddResultString( number_str );
+	// AddResultString( number_str );
+
+	const std::string& optional_string = mSettings->mOptionalString;
+	// AddResultString(optional_string.c_str());               // Show the string only
+	AddResultString(number_str, " ", optional_string.c_str());    // Combine state and string
+
 }
 
 void andersAnalyzerResults::GenerateExportFile( const char* file, DisplayBase display_base, U32 export_type_user_id )
@@ -39,7 +44,7 @@ void andersAnalyzerResults::GenerateExportFile( const char* file, DisplayBase di
 	for( U32 i=0; i < num_frames; i++ )
 	{
 		Frame frame = GetFrame( i );
-		
+
 		char time_str[128];
 		AnalyzerHelpers::GetTimeString( frame.mStartingSampleInclusive, trigger_sample, sample_rate, time_str, 128 );
 

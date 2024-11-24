@@ -9,7 +9,9 @@ andersAnalyzerSettings::andersAnalyzerSettings()
 	mPin1Channel(UNDEFINED_CHANNEL),
 	mPin2Channel(UNDEFINED_CHANNEL),
 	mPin3Channel(UNDEFINED_CHANNEL),
-	mPin4Channel(UNDEFINED_CHANNEL)
+	mPin4Channel(UNDEFINED_CHANNEL),
+
+      	mOptionalString("Default String") // Set a default value for the optional string
 	// mBitRate( 9600 ),
 	// mInputChannelInterface(),
 	// mBitRateInterface()
@@ -34,6 +36,12 @@ andersAnalyzerSettings::andersAnalyzerSettings()
 	mPin4ChannelInterface->SetTitleAndTooltip("Pin 4", "Select the channel for Pin 4 (MSB)");
 	mPin4ChannelInterface->SetChannel(mPin4Channel);
 
+	// Text input interface for the optional string
+	mOptionalStringInterface.reset(new AnalyzerSettingInterfaceText());
+	mOptionalStringInterface->SetTitleAndTooltip("Optional String", "Enter an optional string");
+	mOptionalStringInterface->SetText(mOptionalString.c_str());
+
+
 	// mInputChannelInterface.SetTitleAndTooltip( "Serial", "Standard anders" );
 	// mInputChannelInterface.SetChannel( mInputChannel );
 
@@ -49,6 +57,7 @@ andersAnalyzerSettings::andersAnalyzerSettings()
 	AddInterface(mPin2ChannelInterface.get());
 	AddInterface(mPin3ChannelInterface.get());
 	AddInterface(mPin4ChannelInterface.get());
+	AddInterface(mOptionalStringInterface.get());
 
 
 	AddExportOption( 0, "Export as text/csv file" );
@@ -78,6 +87,9 @@ bool andersAnalyzerSettings::SetSettingsFromInterfaces()
 	mPin3Channel = mPin3ChannelInterface->GetChannel();
 	mPin4Channel = mPin4ChannelInterface->GetChannel();
 
+	// Update the optional string from the GUI
+	mOptionalString = mOptionalStringInterface->GetText();
+
 	ClearChannels();
 	// AddChannel( mInputChannel, "anders", true );
 
@@ -101,6 +113,9 @@ void andersAnalyzerSettings::UpdateInterfacesFromSettings()
 	mPin2ChannelInterface->SetChannel(mPin2Channel);
 	mPin3ChannelInterface->SetChannel(mPin3Channel);
 	mPin4ChannelInterface->SetChannel(mPin4Channel);
+
+	// Update the GUI with the current optional string
+	mOptionalStringInterface->SetText(mOptionalString.c_str());
 }
 
 void andersAnalyzerSettings::LoadSettings( const char* settings )
@@ -115,6 +130,17 @@ void andersAnalyzerSettings::LoadSettings( const char* settings )
     text_archive >> mPin2Channel;
     text_archive >> mPin3Channel;
     text_archive >> mPin4Channel;
+
+    const char* optional_string = nullptr; // Initialize a pointer for the string
+    if (text_archive >> &optional_string)       // Use the `>>` operator to retrieve the string
+    {
+        mOptionalString = optional_string; // Convert to std::string
+    }
+    else
+    {
+        mOptionalString = ""; // Provide a fallback default value
+    }
+
 	ClearChannels();
 	// AddChannel( mInputChannel, "anders", true );
     AddChannel(mReadTriggerChannel, "Read Trigger", true);
@@ -136,6 +162,7 @@ const char* andersAnalyzerSettings::SaveSettings()
     text_archive << mPin2Channel;
     text_archive << mPin3Channel;
     text_archive << mPin4Channel;
-
+    text_archive << mOptionalString.c_str(); // Serialize the string
+//     text_archive << mOptionalString; // Save the optional string
 	return SetReturnString( text_archive.GetString() );
 }

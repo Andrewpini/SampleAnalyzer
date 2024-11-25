@@ -40,9 +40,9 @@ andersAnalyzerSettings::andersAnalyzerSettings()
 	{
 	mStateStrings[i] = "State " + std::to_string(i); // Default state names
 	mStateInterfaces[i].reset(new AnalyzerSettingInterfaceText());
-	mStateInterfaces[i]->SetTitleAndTooltip("FILL IN LATER", "FILL IN LATER");
+	mStateInterfaces[i]->SetTitleAndTooltip(mStateStrings[i].c_str(), mStateStrings[i].c_str());
 	// mStateInterfaces[i]->SetTitleAndTooltip("State " + std::to_string(i), "Enter a description for state " + std::to_string(i));
-	mStateInterfaces[i]->SetText(mStateStrings[i].c_str());
+	mStateInterfaces[i]->SetText("");
 
 	// auto interface = std::make_unique<AnalyzerSettingInterfaceText>();
 	// interface->SetTitleAndTooltip("State " + std::to_string(i), "Enter a description for state " + std::to_string(i));

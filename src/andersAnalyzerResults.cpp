@@ -16,19 +16,28 @@ andersAnalyzerResults::~andersAnalyzerResults()
 {
 }
 
-void andersAnalyzerResults::GenerateBubbleText( U64 frame_index, Channel& channel, DisplayBase display_base )
+void andersAnalyzerResults::GenerateBubbleText(U64 frame_index, Channel& channel, DisplayBase display_base)
 {
-	ClearResultStrings();
-	Frame frame = GetFrame( frame_index );
+    ClearResultStrings();
+    Frame frame = GetFrame(frame_index);
 
-	char number_str[128];
-	AnalyzerHelpers::GetNumberString( frame.mData1, display_base, 8, number_str, 128 );
-	// AddResultString( number_str );
+    // Convert the frame's data to a number string
+    char number_str[128];
+    AnalyzerHelpers::GetNumberString(frame.mData1, display_base, 8, number_str, 128);
 
-	const std::string& optional_string = mSettings->mOptionalString;
-	// AddResultString(optional_string.c_str());               // Show the string only
-	AddResultString(number_str, " ", optional_string.c_str());    // Combine state and string
+    // Map state strings based on frame data
+    std::string state_string;
+    if (frame.mData1 < 16)
+    {
+        state_string = mSettings->mStateStrings[frame.mData1];
+    }
+    else
+    {
+        state_string = ""; // Default to an empty string
+    }
 
+    // Combine the state number string and optional string for the bubble text
+    AddResultString(number_str, " ", state_string.c_str());
 }
 
 void andersAnalyzerResults::GenerateExportFile( const char* file, DisplayBase display_base, U32 export_type_user_id )

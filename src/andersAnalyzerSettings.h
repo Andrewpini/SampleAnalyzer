@@ -24,7 +24,7 @@ public:
 	Channel mPin3Channel;
 	Channel mPin4Channel;
 
-	std::string mOptionalString; // Optional string variable
+    	std::string mStateStrings[16]; // Array of state strings
 protected:
 	// AnalyzerSettingInterfaceChannel	mInputChannelInterface;
 	// AnalyzerSettingInterfaceInteger	mBitRateInterface;
@@ -34,7 +34,9 @@ protected:
 	std::unique_ptr<AnalyzerSettingInterfaceChannel> mPin3ChannelInterface;
 	std::unique_ptr<AnalyzerSettingInterfaceChannel> mPin4ChannelInterface;
 
-	std::unique_ptr<AnalyzerSettingInterfaceText> mOptionalStringInterface; // Text input interface
+
+ 	std::unique_ptr<AnalyzerSettingInterfaceText> mStateInterfaces[16]; // Interfaces for state strings
+	// std::unique_ptr<AnalyzerSettingInterfaceText> mState0Interface; // Text input interface
 };
 
 #endif //ANDERS_ANALYZER_SETTINGS

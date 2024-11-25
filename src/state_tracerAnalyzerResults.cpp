@@ -33,7 +33,7 @@ void state_tracerAnalyzerResults::GenerateBubbleText(U64 frame_index, Channel& c
     }
     else
     {
-        state_string = ""; // Default to an empty string
+	state_string = (frame.mData1 == 0xff) ? "Unknown State" : "";
     }
 
     // Combine the state number string and optional string for the bubble text

@@ -1,22 +1,22 @@
-#include "andersAnalyzerResults.h"
+#include "state_tracerAnalyzerResults.h"
 #include <AnalyzerHelpers.h>
-#include "andersAnalyzer.h"
-#include "andersAnalyzerSettings.h"
+#include "state_tracerAnalyzer.h"
+#include "state_tracerAnalyzerSettings.h"
 #include <iostream>
 #include <fstream>
 
-andersAnalyzerResults::andersAnalyzerResults( andersAnalyzer* analyzer, andersAnalyzerSettings* settings )
+state_tracerAnalyzerResults::state_tracerAnalyzerResults( state_tracerAnalyzer* analyzer, state_tracerAnalyzerSettings* settings )
 :	AnalyzerResults(),
 	mSettings( settings ),
 	mAnalyzer( analyzer )
 {
 }
 
-andersAnalyzerResults::~andersAnalyzerResults()
+state_tracerAnalyzerResults::~state_tracerAnalyzerResults()
 {
 }
 
-void andersAnalyzerResults::GenerateBubbleText(U64 frame_index, Channel& channel, DisplayBase display_base)
+void state_tracerAnalyzerResults::GenerateBubbleText(U64 frame_index, Channel& channel, DisplayBase display_base)
 {
     ClearResultStrings();
     Frame frame = GetFrame(frame_index);
@@ -40,7 +40,7 @@ void andersAnalyzerResults::GenerateBubbleText(U64 frame_index, Channel& channel
     AddResultString(number_str, " ", state_string.c_str());
 }
 
-void andersAnalyzerResults::GenerateExportFile( const char* file, DisplayBase display_base, U32 export_type_user_id )
+void state_tracerAnalyzerResults::GenerateExportFile( const char* file, DisplayBase display_base, U32 export_type_user_id )
 {
 	std::ofstream file_stream( file, std::ios::out );
 
@@ -72,7 +72,7 @@ void andersAnalyzerResults::GenerateExportFile( const char* file, DisplayBase di
 	file_stream.close();
 }
 
-void andersAnalyzerResults::GenerateFrameTabularText( U64 frame_index, DisplayBase display_base )
+void state_tracerAnalyzerResults::GenerateFrameTabularText( U64 frame_index, DisplayBase display_base )
 {
 #ifdef SUPPORTS_PROTOCOL_SEARCH
 	Frame frame = GetFrame( frame_index );
@@ -84,13 +84,13 @@ void andersAnalyzerResults::GenerateFrameTabularText( U64 frame_index, DisplayBa
 #endif
 }
 
-void andersAnalyzerResults::GeneratePacketTabularText( U64 packet_id, DisplayBase display_base )
+void state_tracerAnalyzerResults::GeneratePacketTabularText( U64 packet_id, DisplayBase display_base )
 {
 	//not supported
 
 }
 
-void andersAnalyzerResults::GenerateTransactionTabularText( U64 transaction_id, DisplayBase display_base )
+void state_tracerAnalyzerResults::GenerateTransactionTabularText( U64 transaction_id, DisplayBase display_base )
 {
 	//not supported
 }

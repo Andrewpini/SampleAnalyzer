@@ -1,8 +1,8 @@
-#include "andersAnalyzerSettings.h"
+#include "state_tracerAnalyzerSettings.h"
 #include <AnalyzerHelpers.h>
 
 
-andersAnalyzerSettings::andersAnalyzerSettings()
+state_tracerAnalyzerSettings::state_tracerAnalyzerSettings()
     : mReadTriggerChannel( UNDEFINED_CHANNEL ),
       mPin1Channel( UNDEFINED_CHANNEL ),
       mPin2Channel( UNDEFINED_CHANNEL ),
@@ -62,11 +62,11 @@ andersAnalyzerSettings::andersAnalyzerSettings()
     AddChannel( mPin4Channel, "Pin 4", false );
 }
 
-andersAnalyzerSettings::~andersAnalyzerSettings()
+state_tracerAnalyzerSettings::~state_tracerAnalyzerSettings()
 {
 }
 
-bool andersAnalyzerSettings::SetSettingsFromInterfaces()
+bool state_tracerAnalyzerSettings::SetSettingsFromInterfaces()
 {
     mReadTriggerChannel = mReadTriggerChannelInterface->GetChannel();
     mPin1Channel = mPin1ChannelInterface->GetChannel();
@@ -90,7 +90,7 @@ bool andersAnalyzerSettings::SetSettingsFromInterfaces()
     return true;
 }
 
-void andersAnalyzerSettings::UpdateInterfacesFromSettings()
+void state_tracerAnalyzerSettings::UpdateInterfacesFromSettings()
 {
     mReadTriggerChannelInterface->SetChannel( mReadTriggerChannel );
     mPin1ChannelInterface->SetChannel( mPin1Channel );
@@ -105,7 +105,7 @@ void andersAnalyzerSettings::UpdateInterfacesFromSettings()
     }
 }
 
-void andersAnalyzerSettings::LoadSettings( const char* settings )
+void state_tracerAnalyzerSettings::LoadSettings( const char* settings )
 {
     SimpleArchive text_archive;
     text_archive.SetString( settings );
@@ -138,7 +138,7 @@ void andersAnalyzerSettings::LoadSettings( const char* settings )
     UpdateInterfacesFromSettings();
 }
 
-const char* andersAnalyzerSettings::SaveSettings()
+const char* state_tracerAnalyzerSettings::SaveSettings()
 {
     SimpleArchive text_archive;
     text_archive << mReadTriggerChannel;

@@ -1,14 +1,14 @@
-#ifndef ANDERS_ANALYZER_SETTINGS
-#define ANDERS_ANALYZER_SETTINGS
+#ifndef STATE_TRACER_ANALYZER_SETTINGS
+#define STATE_TRACER_ANALYZER_SETTINGS
 
 #include <AnalyzerSettings.h>
 #include <AnalyzerTypes.h>
 
-class andersAnalyzerSettings : public AnalyzerSettings
+class state_tracerAnalyzerSettings : public AnalyzerSettings
 {
 public:
-	andersAnalyzerSettings();
-	virtual ~andersAnalyzerSettings();
+	state_tracerAnalyzerSettings();
+	virtual ~state_tracerAnalyzerSettings();
 
 	virtual bool SetSettingsFromInterfaces();
 	void UpdateInterfacesFromSettings();
@@ -32,4 +32,4 @@ protected:
  	std::unique_ptr<AnalyzerSettingInterfaceText> mStateInterfaces[16]; // Interfaces for state strings
 };
 
-#endif //ANDERS_ANALYZER_SETTINGS
+#endif //STATE_TRACER_ANALYZER_SETTINGS

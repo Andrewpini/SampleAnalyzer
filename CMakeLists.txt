@@ -1,6 +1,6 @@
 cmake_minimum_required (VERSION 3.13)
 
-project(andersAnalyzer)
+project(state_tracerAnalyzer)
 
 add_definitions( -DLOGIC2 )
 
@@ -13,14 +13,14 @@ set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 include(ExternalAnalyzerSDK)
 
 set(SOURCES 
-src/andersAnalyzer.cpp
-src/andersAnalyzer.h
-src/andersAnalyzerResults.cpp
-src/andersAnalyzerResults.h
-src/andersAnalyzerSettings.cpp
-src/andersAnalyzerSettings.h
-src/andersSimulationDataGenerator.cpp
-src/andersSimulationDataGenerator.h
+src/state_tracerAnalyzer.cpp
+src/state_tracerAnalyzer.h
+src/state_tracerAnalyzerResults.cpp
+src/state_tracerAnalyzerResults.h
+src/state_tracerAnalyzerSettings.cpp
+src/state_tracerAnalyzerSettings.h
+src/state_tracerSimulationDataGenerator.cpp
+src/state_tracerSimulationDataGenerator.h
 )
 
 add_analyzer_plugin(${PROJECT_NAME} SOURCES ${SOURCES})

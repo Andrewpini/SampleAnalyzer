@@ -1,16 +1,16 @@
-#ifndef ANDERS_ANALYZER_RESULTS
-#define ANDERS_ANALYZER_RESULTS
+#ifndef STATE_TRACER_ANALYZER_RESULTS
+#define STATE_TRACER_ANALYZER_RESULTS
 
 #include <AnalyzerResults.h>
 
-class andersAnalyzer;
-class andersAnalyzerSettings;
+class state_tracerAnalyzer;
+class state_tracerAnalyzerSettings;
 
-class andersAnalyzerResults : public AnalyzerResults
+class state_tracerAnalyzerResults : public AnalyzerResults
 {
 public:
-	andersAnalyzerResults( andersAnalyzer* analyzer, andersAnalyzerSettings* settings );
-	virtual ~andersAnalyzerResults();
+	state_tracerAnalyzerResults( state_tracerAnalyzer* analyzer, state_tracerAnalyzerSettings* settings );
+	virtual ~state_tracerAnalyzerResults();
 
 	virtual void GenerateBubbleText( U64 frame_index, Channel& channel, DisplayBase display_base );
 	virtual void GenerateExportFile( const char* file, DisplayBase display_base, U32 export_type_user_id );
@@ -22,8 +22,8 @@ public:
 protected: //functions
 
 protected:  //vars
-	andersAnalyzerSettings* mSettings;
-	andersAnalyzer* mAnalyzer;
+	state_tracerAnalyzerSettings* mSettings;
+	state_tracerAnalyzer* mAnalyzer;
 };
 
-#endif //ANDERS_ANALYZER_RESULTS
+#endif //STATE_TRACER_ANALYZER_RESULTS

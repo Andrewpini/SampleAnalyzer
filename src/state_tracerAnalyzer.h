@@ -1,17 +1,17 @@
-#ifndef ANDERS_ANALYZER_H
-#define ANDERS_ANALYZER_H
+#ifndef STATE_TRACER_ANALYZER_H
+#define STATE_TRACER_ANALYZER_H
 
 #include <Analyzer.h>
-#include "andersAnalyzerSettings.h"
-#include "andersAnalyzerResults.h"
-#include "andersSimulationDataGenerator.h"
+#include "state_tracerAnalyzerSettings.h"
+#include "state_tracerAnalyzerResults.h"
+#include "state_tracerSimulationDataGenerator.h"
 #include <memory>
 
-class ANALYZER_EXPORT andersAnalyzer : public Analyzer2
+class ANALYZER_EXPORT state_tracerAnalyzer : public Analyzer2
 {
 public:
-	andersAnalyzer();
-	virtual ~andersAnalyzer();
+	state_tracerAnalyzer();
+	virtual ~state_tracerAnalyzer();
 
 	virtual void SetupResults();
 	virtual void WorkerThread();
@@ -23,11 +23,11 @@ public:
 	virtual bool NeedsRerun();
 
 protected: //vars
-	andersAnalyzerSettings mSettings;
-	std::unique_ptr<andersAnalyzerResults> mResults;
+	state_tracerAnalyzerSettings mSettings;
+	std::unique_ptr<state_tracerAnalyzerResults> mResults;
 	AnalyzerChannelData* mSerial;
 
-	andersSimulationDataGenerator mSimulationDataGenerator;
+	state_tracerSimulationDataGenerator mSimulationDataGenerator;
 	bool mSimulationInitilized;
 
 	//Serial analysis vars:
@@ -40,4 +40,4 @@ extern "C" ANALYZER_EXPORT const char* __cdecl GetAnalyzerName();
 extern "C" ANALYZER_EXPORT Analyzer* __cdecl CreateAnalyzer( );
 extern "C" ANALYZER_EXPORT void __cdecl DestroyAnalyzer( Analyzer* analyzer );
 
-#endif //ANDERS_ANALYZER_H
+#endif //STATE_TRACER_ANALYZER_H

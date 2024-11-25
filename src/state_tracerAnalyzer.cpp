@@ -1,8 +1,8 @@
-#include "andersAnalyzer.h"
-#include "andersAnalyzerSettings.h"
+#include "state_tracerAnalyzer.h"
+#include "state_tracerAnalyzerSettings.h"
 #include <AnalyzerChannelData.h>
 
-andersAnalyzer::andersAnalyzer()
+state_tracerAnalyzer::state_tracerAnalyzer()
 :	Analyzer2(),
 	mSettings(),
 	mSimulationInitilized( false )
@@ -10,15 +10,15 @@ andersAnalyzer::andersAnalyzer()
 	SetAnalyzerSettings( &mSettings );
 }
 
-andersAnalyzer::~andersAnalyzer()
+state_tracerAnalyzer::~state_tracerAnalyzer()
 {
 	KillThread();
 }
 
-void andersAnalyzer::SetupResults()
+void state_tracerAnalyzer::SetupResults()
 {
 	// SetupResults is called each time the analyzer is run. Because the same instance can be used for multiple runs, we need to clear the results each time.
-	mResults.reset(new andersAnalyzerResults( this, &mSettings ));
+	mResults.reset(new state_tracerAnalyzerResults( this, &mSettings ));
 	SetAnalyzerResults( mResults.get() );
 	mResults->AddChannelBubblesWillAppearOn( mSettings.mReadTriggerChannel );
 }
@@ -43,7 +43,7 @@ static bool try_advancing( AnalyzerChannelData* pin )
 }
 
 
-void andersAnalyzer::WorkerThread()
+void state_tracerAnalyzer::WorkerThread()
 {
     auto* read_trigger = GetAnalyzerChannelData( mSettings.mReadTriggerChannel );
     auto* pin1 = GetAnalyzerChannelData( mSettings.mPin1Channel );
@@ -86,12 +86,12 @@ void andersAnalyzer::WorkerThread()
     }
 }
 
-bool andersAnalyzer::NeedsRerun()
+bool state_tracerAnalyzer::NeedsRerun()
 {
 	return false;
 }
 
-U32 andersAnalyzer::GenerateSimulationData( U64 minimum_sample_index, U32 device_sample_rate, SimulationChannelDescriptor** simulation_channels )
+U32 state_tracerAnalyzer::GenerateSimulationData( U64 minimum_sample_index, U32 device_sample_rate, SimulationChannelDescriptor** simulation_channels )
 {
 	if( mSimulationInitilized == false )
 	{
@@ -102,25 +102,25 @@ U32 andersAnalyzer::GenerateSimulationData( U64 minimum_sample_index, U32 device
 	return mSimulationDataGenerator.GenerateSimulationData( minimum_sample_index, device_sample_rate, simulation_channels );
 }
 
-U32 andersAnalyzer::GetMinimumSampleRateHz()
+U32 state_tracerAnalyzer::GetMinimumSampleRateHz()
 {
 	return 0;
 	// return mSettings.mBitRate * 4;
 }
 
-const char* andersAnalyzer::GetAnalyzerName() const
+const char* state_tracerAnalyzer::GetAnalyzerName() const
 {
-	return "anders";
+	return "Anders' State Tracer";
 }
 
 const char* GetAnalyzerName()
 {
-	return "anders";
+	return "Anders' State Tracer";
 }
 
 Analyzer* CreateAnalyzer()
 {
-	return new andersAnalyzer();
+	return new state_tracerAnalyzer();
 }
 
 void DestroyAnalyzer( Analyzer* analyzer )

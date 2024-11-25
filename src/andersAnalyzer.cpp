@@ -23,6 +23,21 @@ void andersAnalyzer::SetupResults()
 	mResults->AddChannelBubblesWillAppearOn( mSettings.mReadTriggerChannel );
 }
 
+static bool try_advancing( AnalyzerChannelData* pin )
+{
+    if( !pin->WouldAdvancingCauseTransition( 10000 ) )
+    {
+        pin->Advance( 10000 );
+        return true;
+    }
+    else
+    {
+        pin->AdvanceToNextEdge();
+        return false;
+    }
+}
+
+
 void andersAnalyzer::WorkerThread()
 {
 	U64 wrt_start = 0;
@@ -36,25 +51,25 @@ void andersAnalyzer::WorkerThread()
 	auto* pin3 = GetAnalyzerChannelData(mSettings.mPin3Channel);
 	auto* pin4 = GetAnalyzerChannelData(mSettings.mPin4Channel);
 
-	if( read_trigger->GetBitState() == BIT_LOW )
-		read_trigger->AdvanceToNextEdge();
+	// if( read_trigger->GetBitState() == BIT_LOW )
+	// 	read_trigger->AdvanceToNextEdge();
 
-	// Unknown state: set it to 0xFF
-	wrt_end = read_trigger->GetSampleNumber();
-	Frame frame;
-	frame.mData1 = 0xff;
-	frame.mFlags = 0;
-	frame.mStartingSampleInclusive = 0;
-	frame.mEndingSampleInclusive = wrt_end;
-	mResults->AddFrame( frame );
-	mResults->CommitResults();
-	ReportProgress( frame.mEndingSampleInclusive );
-	wrt_start = wrt_end;
+	// // Unknown state: set it to 0xFF
+	// wrt_end = read_trigger->GetSampleNumber();
+	// Frame frame;
+	// frame.mData1 = 0xff;
+	// frame.mFlags = 0;
+	// frame.mStartingSampleInclusive = 0;
+	// frame.mEndingSampleInclusive = wrt_end;
+	// mResults->AddFrame( frame );
+	// mResults->CommitResults();
+	// ReportProgress( frame.mEndingSampleInclusive );
+	// wrt_start = wrt_end;
 
 
 	bool first_sample_taken;
 	U8 data = 0;
-        U8 state = 0;
+        U8 state = 0xff;
 
 	/* What do i need:
 		- Sample nr of this trigger rEdge: To be able to read pin data and know start of output
@@ -64,40 +79,30 @@ void andersAnalyzer::WorkerThread()
 	for( ; ; )
 	{
 
-	U64 current_sample = read_trigger->GetSampleNumber();
-	wrt_end = current_sample;
+	if (try_advancing(read_trigger)) {
+            Frame frame;
+            frame.mData1 = state;
+            frame.mFlags = 0;
+            frame.mStartingSampleInclusive = wrt_start;
+            frame.mEndingSampleInclusive = read_trigger->GetSampleNumber();
+            mResults->AddFrame( frame );
+            mResults->CommitResults();
+            ReportProgress( frame.mEndingSampleInclusive );
+	} else {
+		wrt_start = read_trigger->GetSampleNumber();
+		pin1->AdvanceToAbsPosition(read_trigger->GetSampleNumber());
+		pin2->AdvanceToAbsPosition(read_trigger->GetSampleNumber());
+		pin3->AdvanceToAbsPosition(read_trigger->GetSampleNumber());
+		pin4->AdvanceToAbsPosition(read_trigger->GetSampleNumber());
+		state = (pin1->GetBitState() == BIT_HIGH ? 1 : 0) << 0; // Pin 1 (LSB)
+		state |= (pin2->GetBitState() == BIT_HIGH ? 1 : 0) << 1; // Pin 2
+		state |= (pin3->GetBitState() == BIT_HIGH ? 1 : 0) << 2; // Pin 3
+		state |= (pin4->GetBitState() == BIT_HIGH ? 1 : 0) << 3; // Pin 4 (MSB)
 
-	if (first_sample_taken)
-	{
-		Frame frame;
-		frame.mData1 = state;
-		frame.mFlags = 0;
-		frame.mStartingSampleInclusive = wrt_start;
-		frame.mEndingSampleInclusive = wrt_end;
+		if( read_trigger->GetBitState() == BIT_HIGH )
+		read_trigger->AdvanceToNextEdge();
 
-		mResults->AddFrame( frame );
-		mResults->CommitResults();
-		ReportProgress( frame.mEndingSampleInclusive );
-
-		wrt_start = current_sample;
-		state = 0;
 	}
-
-
-	pin1->AdvanceToAbsPosition(read_trigger->GetSampleNumber());
-	pin2->AdvanceToAbsPosition(read_trigger->GetSampleNumber());
-	pin3->AdvanceToAbsPosition(read_trigger->GetSampleNumber());
-	pin4->AdvanceToAbsPosition(read_trigger->GetSampleNumber());
-        state |= (pin1->GetBitState() == BIT_HIGH ? 1 : 0) << 0; // Pin 1 (LSB)
-        state |= (pin2->GetBitState() == BIT_HIGH ? 1 : 0) << 1; // Pin 2
-        state |= (pin3->GetBitState() == BIT_HIGH ? 1 : 0) << 2; // Pin 3
-        state |= (pin4->GetBitState() == BIT_HIGH ? 1 : 0) << 3; // Pin 4 (MSB)
-
-
-	read_trigger->AdvanceToNextEdge(); //falling edge -- beginning of the start bit
-	read_trigger->AdvanceToNextEdge(); //rising edge -- beginning of the start bit
-
-	first_sample_taken = true;
 	}
 }
 
